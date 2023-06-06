@@ -1,1 +1,3 @@
 Application to find exit from random generic Maze
+The App check the posibility moovments.
+The order of their selection is up, right, down and left, which means that when we have the option to move down and to the right, the algorithm will choose the right path first.
