@@ -9,11 +9,11 @@ public class MazePanel extends JPanel implements ActionListener{
 
     private Image img = new ImageIcon("C:\\Users\\Larko\\IdeaProjects\\Maze\\src\\greenSquare.png").getImage();
 
-    private JButton bExit, bStart, bNewMap, bChangeValueOfMaze;
+    private final JButton bExit, bStart, bNewMap, bChangeValueOfMaze;
     private int positionX, positionY, playerPositionY=10, playerPositionX=0, stepsCounter = 0;
     private int[][] mazeArray = new int[20][40];
     private String[] playerMove = new String[800];
-    private JTextField tfPositionX, tfPositionY;
+    private final JTextField tfPositionX, tfPositionY;
 
     private boolean inThereMoveLeft, inThereMoveRight = false, inThereMoveUp = false, inThereMoveDown = false;
     boolean mazeHasBeenCreated=false;;
@@ -38,7 +38,6 @@ public class MazePanel extends JPanel implements ActionListener{
         bNewMap.setBounds(710, 520, 120, 20);
         bNewMap.addActionListener(this);
         add(bNewMap);
-
 
         tfPositionX = new JTextField();
         tfPositionX.setBounds(200,535,40,20);
@@ -107,13 +106,13 @@ public class MazePanel extends JPanel implements ActionListener{
                     g2d.fillRect(100+positionX, 100+positionY, 20, 20);
                 }else if(mazeArray[i][j] == 2 || mazeArray[i][j] == 3 || mazeArray[i][j] == 4 || mazeArray[i][j] == 5) {
                     if(mazeArray[i][j] == 2) {
-                        img = new ImageIcon("C:\\Users\\Larko\\IdeaProjects\\Maze\\src\\greenSquareUP.png").getImage();
+                        img = new ImageIcon("src\\greenSquareUP.png").getImage();
                     }else if(mazeArray[i][j] == 3) {
-                        img = new ImageIcon("C:\\Users\\Larko\\IdeaProjects\\Maze\\src\\greenSquareRIGHT.png").getImage();
+                        img = new ImageIcon("src\\greenSquareRIGHT.png").getImage();
                     }else if(mazeArray[i][j] == 4) {
-                        img = new ImageIcon("C:\\Users\\Larko\\IdeaProjects\\Maze\\src\\greenSquareDOWN.png").getImage();
+                        img = new ImageIcon("src\\greenSquareDOWN.png").getImage();
                     }else if(mazeArray[i][j] == 5) {
-                        img = new ImageIcon("C:\\Users\\Larko\\IdeaProjects\\Maze\\src\\greenSquareLEFT.png").getImage();
+                        img = new ImageIcon("src\\greenSquareLEFT.png").getImage();
                     }
                     g2d.drawImage(img, 100 + positionX, 100 + positionY, this);
                 }else if(mazeArray[i][j] == 6){
@@ -123,7 +122,7 @@ public class MazePanel extends JPanel implements ActionListener{
                     g2d.setColor(Color.black);
                     g2d.fillRect(100+positionX, 100+positionY, 20, 20);
                 }else if(mazeArray[i][j] == 8){
-                    img = new ImageIcon("C:\\Users\\Larko\\IdeaProjects\\Maze\\src\\greenSquare.png").getImage();
+                    img = new ImageIcon("src\\greenSquare.png").getImage();
                     g2d.drawImage(img, 100 + positionX, 100 + positionY, this);
                 }
                 positionX+=20;
@@ -189,6 +188,10 @@ public class MazePanel extends JPanel implements ActionListener{
         System.out.println("Up: " + inThereMoveUp);
         System.out.println("Down: " + inThereMoveDown);
     }
+    public void movePlayer(int yFix, int xFix, int squareNumber, String moveLabel){
+        mazeArray[playerPositionY+yFix][playerPositionX+xFix] = squareNumber;
+        playerMove[stepsCounter]=moveLabel;
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         Object event = e.getSource();
@@ -199,42 +202,39 @@ public class MazePanel extends JPanel implements ActionListener{
             do{
                 isAvailableMove();
                 if(inThereMoveUp) {
-                    mazeArray[playerPositionY-1][playerPositionX] = 2;
+                    movePlayer(-1,0,2,"UP");
                     playerPositionY--;
-                    playerMove[stepsCounter]="UP";
-                    break;
                 }else if(inThereMoveRight) {
-                    mazeArray[playerPositionY][playerPositionX+1] = 3;
-                    playerMove[stepsCounter]="RIGHT";
+                    movePlayer(0,1,3,"RIGHT");
                     playerPositionX++;
-                    break;
                 }else if(inThereMoveDown) {
-                    mazeArray[playerPositionY+1][playerPositionX] = 4;
-                    playerMove[stepsCounter]="DOWN";
+                    movePlayer(1,0,4,"DOWN");
                     playerPositionY++;
-                    break;
                 }else if(inThereMoveLeft) {
-                    mazeArray[playerPositionY][playerPositionX-1] = 5;
-                    playerMove[stepsCounter]="LEFT";
+                    movePlayer(0,-1,5,"LEFT");
                     playerPositionX--;
-                    break;
                 }else if(!inThereMoveUp && !inThereMoveDown && !inThereMoveLeft && !inThereMoveRight) {
-                    if(playerMove[stepsCounter-1].equals("START")) {
-                        JOptionPane.showMessageDialog(null, "There is no exit from maze - rebuild maze", "Alert", JOptionPane.INFORMATION_MESSAGE);
-                        repaint();
-                    }
-                    if(playerMove[stepsCounter-1].equals("UP")) {
-                        mazeArray[playerPositionY][playerPositionX]=8;
-                        playerPositionY++;
-                    }else if(playerMove[stepsCounter-1].equals("RIGHT")) {
-                        mazeArray[playerPositionY][playerPositionX]=8;
-                        playerPositionX--;
-                    }else if(playerMove[stepsCounter-1].equals("DOWN")) {
-                        mazeArray[playerPositionY][playerPositionX]=8;
-                        playerPositionY--;
-                    }else if(playerMove[stepsCounter-1].equals("LEFT")) {
-                        mazeArray[playerPositionY][playerPositionX]=8;
-                        playerPositionY++;
+                    switch (playerMove[stepsCounter - 1]) {
+                        case "START" -> {
+                            JOptionPane.showMessageDialog(null, "There is no exit from maze - rebuild maze", "Alert", JOptionPane.INFORMATION_MESSAGE);
+                            repaint();
+                        }
+                        case "UP" -> {
+                            mazeArray[playerPositionY][playerPositionX] = 8;
+                            playerPositionY++;
+                        }
+                        case "RIGHT" -> {
+                            mazeArray[playerPositionY][playerPositionX] = 8;
+                            playerPositionX--;
+                        }
+                        case "DOWN" -> {
+                            mazeArray[playerPositionY][playerPositionX] = 8;
+                            playerPositionY--;
+                        }
+                        case "LEFT" -> {
+                            mazeArray[playerPositionY][playerPositionX] = 8;
+                            playerPositionX++;
+                        }
                     }
                     playerMove[stepsCounter]=null;
                     stepsCounter--;
